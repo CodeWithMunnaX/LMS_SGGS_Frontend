@@ -10,7 +10,8 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  Filter
+  Filter,
+  X
 } from 'lucide-react';
 import courseService from '../services/courseService';
 import CourseCard from '../components/CourseCard';
@@ -102,10 +103,15 @@ export const CourseCatalogPage = () => {
       ...newParams
     };
 
-    // Clean undefined
-    Object.keys(updated).forEach((key) => updated[key] === undefined && delete updated[key]);
+    // Clean undefined/empty
+    const cleaned = {};
+    Object.keys(updated).forEach((k) => {
+      if (updated[k] !== undefined && updated[k] !== '' && updated[k] !== 'All') {
+        cleaned[k] = updated[k];
+      }
+    });
 
-    setSearchParams(updated);
+    setSearchParams(cleaned);
   };
 
   const handleSearchSubmit = (e) => {
@@ -123,26 +129,20 @@ export const CourseCatalogPage = () => {
     setSearchParams({});
   };
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-    applyFilters({ page: newPage });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6 sm:space-y-8">
       {/* Header Banner */}
-      <div className="space-y-4">
+      <div className="space-y-2 sm:space-y-4">
         <div className="flex items-center gap-2">
           <Badge variant="indigo" size="sm">
-            <Sparkles className="w-3 h-3 text-indigo-400" />
+            <Sparkles className="w-3 h-3 text-indigo-500 dark:text-indigo-400" />
             <span>COURSE CATALOG</span>
           </Badge>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+        <h1 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
           Explore All Courses
         </h1>
-        <p className="text-sm text-slate-400 max-w-2xl">
+        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
           Learn from industry-tested instructors with rich video lectures, downloadable cheat sheets, and verified completion credentials.
         </p>
       </div>
@@ -155,7 +155,7 @@ export const CourseCatalogPage = () => {
             placeholder="Search by topic, framework, skill..."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl text-sm text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
           />
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
         </form>
@@ -164,7 +164,7 @@ export const CourseCatalogPage = () => {
           {/* Mobile Filter Toggle */}
           <button
             onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-            className="md:hidden flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-xl text-xs font-bold text-slate-200"
+            className="md:hidden flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-transparent"
           >
             <Filter className="w-4 h-4" />
             <span>Filters</span>
@@ -172,14 +172,14 @@ export const CourseCatalogPage = () => {
 
           {/* Sort Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-400 hidden sm:inline">Sort:</span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">Sort:</span>
             <select
               value={sort}
               onChange={(e) => {
                 setSort(e.target.value);
                 applyFilters({ sort: e.target.value });
               }}
-              className="bg-slate-900 border border-slate-700/80 text-xs font-semibold text-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500"
+              className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-xs font-semibold text-slate-800 dark:text-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500"
             >
               <option value="newest">Newest Releases</option>
               <option value="popular">Most Popular</option>
@@ -195,14 +195,14 @@ export const CourseCatalogPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         {/* Filter Sidebar (Desktop) */}
         <div className="hidden lg:block glass-panel p-6 rounded-2xl space-y-6 sticky top-24">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-indigo-400" />
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Filters</h3>
+              <SlidersHorizontal className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Filters</h3>
             </div>
             <button
               onClick={handleClearFilters}
-              className="text-[11px] font-semibold text-slate-400 hover:text-indigo-400 flex items-center gap-1 transition-colors"
+              className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset</span>
@@ -211,7 +211,7 @@ export const CourseCatalogPage = () => {
 
           {/* Category Filter */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               Category
             </label>
             <div className="space-y-1">
@@ -225,7 +225,7 @@ export const CourseCatalogPage = () => {
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     category === cat
                       ? 'bg-indigo-600 text-white font-bold'
-                      : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   {cat}
@@ -235,8 +235,8 @@ export const CourseCatalogPage = () => {
           </div>
 
           {/* Level Filter */}
-          <div className="space-y-2 pt-2 border-t border-slate-800">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               Difficulty Level
             </label>
             <div className="space-y-1">
@@ -250,7 +250,7 @@ export const CourseCatalogPage = () => {
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     level === lvl
                       ? 'bg-indigo-600 text-white font-bold'
-                      : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   {lvl}
@@ -260,141 +260,143 @@ export const CourseCatalogPage = () => {
           </div>
 
           {/* Price Filter */}
-          <div className="space-y-2 pt-2 border-t border-slate-800">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-              Price
+          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              Pricing
             </label>
-            <div className="grid grid-cols-3 gap-1">
-              {[
-                { id: 'all', label: 'All' },
-                { id: 'free', label: 'Free' },
-                { id: 'paid', label: 'Paid' }
-              ].map((p) => (
+            <div className="grid grid-cols-3 gap-1.5">
+              {['all', 'free', 'paid'].map((p) => (
                 <button
-                  key={p.id}
+                  key={p}
                   onClick={() => {
-                    setPriceType(p.id);
-                    applyFilters({ priceType: p.id !== 'all' ? p.id : undefined });
+                    setPriceType(p);
+                    applyFilters({ priceType: p !== 'all' ? p : undefined });
                   }}
-                  className={`py-1.5 rounded-lg text-xs font-medium text-center transition-colors ${
-                    priceType === p.id
-                      ? 'bg-indigo-600 text-white font-bold'
-                      : 'bg-slate-900 text-slate-400 hover:bg-slate-800'
+                  className={`py-1.5 text-center rounded-lg text-xs font-bold capitalize transition-colors ${
+                    priceType === p
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Rating Filter */}
-          <div className="space-y-2 pt-2 border-t border-slate-800">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-              Minimum Rating
-            </label>
-            <div className="space-y-1">
-              {[
-                { label: '4.5 & up', val: '4.5' },
-                { label: '4.0 & up', val: '4.0' },
-                { label: '3.0 & up', val: '3.0' }
-              ].map((r) => (
-                <button
-                  key={r.val}
-                  onClick={() => {
-                    const nextVal = minRating === r.val ? '' : r.val;
-                    setMinRating(nextVal);
-                    applyFilters({ minRating: nextVal || undefined });
-                  }}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    minRating === r.val
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold'
-                      : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
-                  }`}
-                >
-                  ★ {r.label}
+                  {p}
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Courses Section */}
+        {/* Courses Grid */}
         <div className="lg:col-span-3 space-y-6">
-          <div className="flex items-center justify-between text-xs text-slate-400">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>
-              Showing <strong className="text-white">{courses.length}</strong> of{' '}
-              <strong className="text-white">{totalCourses}</strong> available courses
+              Showing <strong className="text-slate-900 dark:text-white">{courses.length}</strong> of{' '}
+              <strong className="text-slate-900 dark:text-white">{totalCourses}</strong> courses
             </span>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((n) => (
-                <div key={n} className="glass-card rounded-2xl h-80 animate-pulse bg-slate-800/40" />
+                <div key={n} className="glass-card rounded-2xl h-80 animate-pulse bg-slate-200/60 dark:bg-slate-800/40" />
               ))}
             </div>
-          ) : courses.length === 0 ? (
-            <div className="glass-panel rounded-2xl p-12 text-center space-y-4">
-              <div className="w-12 h-12 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
-                <BookOpen className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-bold text-white">No matching courses found</h3>
-              <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                Try adjusting your search keyword or relaxing filter options.
+          ) : courses.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {courses.map((c) => (
+                <CourseCard key={c._id} course={c} />
+              ))}
+            </div>
+          ) : (
+            <div className="glass-panel rounded-3xl p-12 text-center space-y-4">
+              <BookOpen className="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto" />
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">No courses found</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                Try adjusting your search terms or clearing your active filters to view all available courses.
               </p>
               <button
                 onClick={handleClearFilters}
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all"
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-glow"
               >
-                Reset Filters
+                Clear All Filters
               </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((course) => (
-                <CourseCard key={course._id} course={course} />
-              ))}
             </div>
           )}
 
-          {/* Pagination Controls */}
+          {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-6">
               <button
+                onClick={() => applyFilters({ page: page - 1 })}
                 disabled={page <= 1}
-                onClick={() => handlePageChange(page - 1)}
-                className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 disabled:opacity-40 hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 disabled:opacity-30 transition-colors"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
-              {[...Array(totalPages)].map((_, i) => {
-                const pageNumber = i + 1;
-                return (
-                  <button
-                    key={pageNumber}
-                    onClick={() => handlePageChange(pageNumber)}
-                    className={`w-9 h-9 rounded-lg text-xs font-bold transition-all ${
-                      page === pageNumber
-                        ? 'bg-indigo-600 text-white shadow-glow'
-                        : 'bg-slate-900 border border-slate-800 text-slate-400 hover:bg-slate-800'
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              })}
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 px-4">
+                Page {page} of {totalPages}
+              </span>
               <button
+                onClick={() => applyFilters({ page: page + 1 })}
                 disabled={page >= totalPages}
-                onClick={() => handlePageChange(page + 1)}
-                className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 disabled:opacity-40 hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 disabled:opacity-30 transition-colors"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           )}
         </div>
       </div>
+
+      {/* Mobile Filter Drawer Modal */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-50 flex bg-black/60 backdrop-blur-sm lg:hidden animate-fadeIn">
+          <div className="w-80 max-w-[80vw] bg-white dark:bg-slate-900 h-full p-6 overflow-y-auto space-y-6 ml-auto shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Filter Courses</h3>
+              <button
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Mobile Categories */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Category</label>
+              <div className="space-y-1">
+                {categoriesList.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      setCategory(cat);
+                      applyFilters({ category: cat !== 'All' ? cat : undefined });
+                      setIsMobileFilterOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium ${
+                      category === cat
+                        ? 'bg-indigo-600 text-white font-bold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                handleClearFilters();
+                setIsMobileFilterOpen(false);
+              }}
+              className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl"
+            >
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
